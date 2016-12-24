@@ -1,7 +1,7 @@
 all: push
 
 # 0.0 shouldn't clobber any released builds
-TAG ?= 0.4
+TAG:=$(shell git rev-parse --verify HEAD)
 PREFIX ?= gcr.io/seanmcgary-com/ks8-loadbalancer
 GCLOUD ?= gcloud
 HAPROXY_IMAGE = contrib-haproxy

@@ -51,6 +51,7 @@ const (
 	lbApiPort                = 8081
 	lbAlgorithmKey           = "serviceloadbalancer/lb.algorithm"
 	lbHostKey                = "serviceloadbalancer/lb.host"
+	lbHostname               = "serviceloadbalancer/lb.hostname"
 	lbSslTerm                = "serviceloadbalancer/lb.sslTerm"
 	lbAclMatch               = "serviceloadbalancer/lb.aclMatch"
 	redirectWWW              = "serviceloadbalancer/lb.redirectWWW"
@@ -163,6 +164,8 @@ type service struct {
 	// host header inside the http request. It only applies to http traffic.
 	Host string
 
+	Hostname string
+
 	// if true, terminate ssl using the loadbalancers certificates.
 	SslTerm bool
 
@@ -233,6 +236,11 @@ func (s serviceAnnotations) getAlgorithm() (string, bool) {
 
 func (s serviceAnnotations) getHost() (string, bool) {
 	val, ok := s[lbHostKey]
+	return val, ok
+}
+
+func (s serviceAnnotations) getHostname() (string, bool){
+	val, ok := s[lbHostname]
 	return val, ok
 }
 
@@ -452,6 +460,10 @@ func (lbc *loadBalancerController) getServices() (httpSvc []service, httpsTermSv
 
 			if val, ok := serviceAnnotations(s.ObjectMeta.Annotations).getHost(); ok {
 				newSvc.Host = val
+			}
+
+			if val, ok := serviceAnnotations(s.ObjectMeta.Annotations).getHostname(); ok {
+				newSvc.Hostname = val
 			}
 
 			if val, ok := serviceAnnotations(s.ObjectMeta.Annotations).getAlgorithm(); ok {
