@@ -54,6 +54,8 @@ const (
 	lbHostname               = "serviceloadbalancer/lb.hostname"
 	lbSslTerm                = "serviceloadbalancer/lb.sslTerm"
 	lbAclMatch               = "serviceloadbalancer/lb.aclMatch"
+	frontendHttp             = "serviceloadbalancer/lb.frontendHttp"
+	frontendHttps            = "serviceloadbalancer/lb.frontendHttps"
 	redirectWWW              = "serviceloadbalancer/lb.redirectWWW"
 	lbCookieStickySessionKey = "serviceloadbalancer/lb.cookie-sticky-session"
 	defaultErrorPage         = "file:///etc/haproxy/errors/404.http"
@@ -177,6 +179,10 @@ type service struct {
 	// Algorithm
 	Algorithm string
 
+	FrontendHttp string
+
+	FrontendHttps string
+
 	// If SessionAffinity is set and without CookieStickySession, requests are routed to
 	// a backend based on client ip. If both SessionAffinity and CookieStickSession are
 	// set, a SERVERID cookie is inserted by the loadbalancer and used to route subsequent
@@ -239,7 +245,7 @@ func (s serviceAnnotations) getHost() (string, bool) {
 	return val, ok
 }
 
-func (s serviceAnnotations) getHostname() (string, bool){
+func (s serviceAnnotations) getHostname() (string, bool) {
 	val, ok := s[lbHostname]
 	return val, ok
 }
@@ -261,6 +267,16 @@ func (s serviceAnnotations) getAclMatch() (string, bool) {
 
 func (s serviceAnnotations) getRedirectWWW() (string, bool) {
 	val, ok := s[redirectWWW]
+	return val, ok
+}
+
+func (s serviceAnnotations) getFrontendHttp() (string, bool) {
+	val, ok := s[frontendHttp]
+	return val, ok
+}
+
+func (s serviceAnnotations) getFrontendHttps() (string, bool) {
+	val, ok := s[frontendHttps]
 	return val, ok
 }
 
@@ -494,6 +510,14 @@ func (lbc *loadBalancerController) getServices() (httpSvc []service, httpsTermSv
 
 			if val, ok := serviceAnnotations(s.ObjectMeta.Annotations).getAclMatch(); ok {
 				newSvc.AclMatch = val
+			}
+
+			if val, ok := serviceAnnotations(s.ObjectMeta.Annotations).getFrontendHttp(); ok {
+				newSvc.FrontendHttp = val
+			}
+
+			if val, ok := serviceAnnotations(s.ObjectMeta.Annotations).getFrontendHttps(); ok {
+				newSvc.FrontendHttps = val
 			}
 
 			newSvc.RedirectWWW = false
