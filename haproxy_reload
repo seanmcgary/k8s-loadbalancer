@@ -25,10 +25,10 @@
 
 exec 200<$0
 # Block till we can acquire an exclusive file lock:
-flock 200
+#flock 200
 
 socat /tmp/haproxy - <<< "show servers state" > /var/state/haproxy/global
 
 haproxy -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid -D -sf $(cat /var/run/haproxy.pid)
 
-flock -u 200
+#flock -u 200
