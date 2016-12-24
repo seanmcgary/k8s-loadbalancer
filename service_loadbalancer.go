@@ -542,7 +542,9 @@ func (lbc *loadBalancerController) getServices() (httpSvc []service, httpsTermSv
 				newSvc.FrontendPort = lbc.httpPort
 				if newSvc.SslTerm == true {
 					httpsTermSvc = append(httpsTermSvc, newSvc)
-				} else {
+				}
+
+				if newSvc.SslTerm == false || (newSvc.SslTerm == true && len(newSvc.FrontendHttp) > 0) {
 					httpSvc = append(httpSvc, newSvc)
 				}
 			}
