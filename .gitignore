@@ -1,4 +1,5 @@
 service_loadbalancer
+loadbalancer_log
 .DS_Store
 *.sw*
 .idea

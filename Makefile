@@ -21,6 +21,10 @@ push: container-only
 	docker push $(PREFIX):$(TAG)
 	docker push $(PREFIX):latest
 
+clean-go:
+	rm -rf service_loadbalancer || true
+	rm -rf loadbalancer_log || true
+
 clean:
 	# remove servicelb and contrib-haproxy images
 	docker rmi -f $(HAPROXY_IMAGE):$(TAG) || true
